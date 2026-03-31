@@ -2,20 +2,16 @@
 An automation extension for SD-WebUI Forge Classic (and potentially other Forge/A1111-based UIs) that allows you to automatically "mirror" your generated images to multiple directories in different file formats simultaneously.
 
 🌟 The Problem it Solves
-If you save your primary generations in one drive, but frequently need the same or other file extension versions in other folder(s) for easy use, this extension automates that entire workflow.
+- If you save your primary generations in one drive, but frequently need the same or other file extension versions in other folder(s) for easy use, this extension automates that entire workflow.
 
 🚀 Features
-Multi-Path Mirroring: Add as many target directories as you want.
-
-Format Conversion: Save the "mirror" copy as PNG, WebP, or JPG, regardless of your main UI settings.
-
-Metadata Preservation: Uses Forge's internal saving engine to ensure Prompts, Seed, and Sampler data are embedded in the mirror copies.
-
-Native Linux Support: Works perfectly with Linux file paths (e.g., /home/user/Downloads).
-
-Persistent Rules: Configuration is saved to an automatically generated mirror_rules.json file (which is also saved in the Scripts folder), so your settings persist across restarts.
-
-Modern UI: A dedicated tab with a reactive Gradio interface for adding, removing, and toggling rules.
+- Multi-Path Mirroring: Add as many target directories as you want.
+- Save to Clipboard: Automatically add generated image PNG to clipboard upon generation.
+- Format Conversion: Save the "mirror" copy as PNG, WebP, or JPG, regardless of your main UI settings.
+- Metadata Preservation: Uses Forge's internal saving engine to ensure Prompts, Seed, and Sampler data are embedded in the mirror copies.
+- Native Linux Support: Works perfectly with Linux file paths (e.g., /home/user/Downloads).
+- Persistent Rules: Configuration is saved to an automatically generated mirror_rules.json file (which is also saved in the Scripts folder), so your settings persist across restarts.
+- Modern UI: A dedicated tab with a reactive Gradio interface for adding, removing, and toggling rules.
 
 🛠️ Installation
 1. Navigate to your Forge installation folder.
