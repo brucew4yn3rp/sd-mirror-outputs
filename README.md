@@ -1,10 +1,10 @@
 ## Mirror Manager for SD-WebUI Forge
 An automation extension for SD-WebUI Forge Classic (and potentially other Forge/A1111-based UIs) that allows you to automatically "mirror" your generated images to multiple directories in different file formats simultaneously.
 
-🌟 The Problem it Solves
+🌟 **The Problem it Solves**
 - If you save your primary generations in one drive, but frequently need the same or other file extension versions in other folder(s) for easy use, this extension automates that entire workflow.
 
-🚀 Features
+🚀 **Features**
 - Multi-Path Mirroring: Add as many target directories as you want.
 - Save to Clipboard: Automatically add generated image PNG to clipboard upon generation.
 - Format Conversion: Save the "mirror" copy as PNG, WebP, or JPG, regardless of your main UI settings.
@@ -13,13 +13,13 @@ An automation extension for SD-WebUI Forge Classic (and potentially other Forge/
 - Persistent Rules: Configuration is saved to an automatically generated mirror_rules.json file (which is also saved in the Scripts folder), so your settings persist across restarts.
 - Modern UI: A dedicated tab with a reactive Gradio interface for adding, removing, and toggling rules.
 
-🛠️ Installation
+🛠️ **Installation**
 1. Navigate to your Forge installation folder.
 2. Go to extensions/sd-webui-forge-classic/scripts/ (or your preferred extensions/scripts directory).
 3. Download the file `mirror_manager.py` code into that directory and save.
 4. Restart your Forge WebUI.
 
-📖 How to Use
+📖 **How to Use**
 1. Configure your Rules
 - Open the WebUI and look for the Mirror Manager tab at the top.
 - Click ➕ Add New Mirror Path.
@@ -32,5 +32,5 @@ An automation extension for SD-WebUI Forge Classic (and potentially other Forge/
 - Your "Master" file will be saved to your default output folder (defined in Settings).
 - A "Mirror" file will instantly appear in your specified folders as soon as the generation finishes.
 
-📝 Configuration File
+📝 **Configuration File**
 - The settings are stored in scripts/mirror_rules.json. If you ever need to bulk-edit your paths or back up your configuration, you can edit this file directly.
