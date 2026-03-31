@@ -4,6 +4,8 @@ import gradio as gr
 from PIL import Image
 from modules import script_callbacks, shared, images
 
+is_mirroring = False
+
 # Path to store our persistent rules
 RULES_FILE = os.path.join(os.path.dirname(__file__), "mirror_rules.json")
 
@@ -18,44 +20,51 @@ def save_rules(rules):
         json.dump(rules, f)
 
 def on_image_saved(params: script_callbacks.ImageSaveParams):
+    global is_mirroring
+    
+    # IF WE ARE ALREADY SAVING A MIRROR, STOP HERE to avoid infinite loop
+    if is_mirroring:
+        return
+
     rules = load_rules()
     if not rules:
         return
 
-    # Try to grab the metadata (generation info) safely
-    # params.pnginfo usually contains the metadata dictionary in newer Forge versions
     gen_info = params.pnginfo.get("parameters", "") if params.pnginfo else ""
-    
-    # Fallback: Check if it's available in the processing object 'p'
     if not gen_info and hasattr(params, 'p') and params.p:
         gen_info = getattr(params.p, "info", "")
 
-    for rule in rules:
-        if not rule.get("active", True):
-            continue
-            
-        target_dir = rule.get("path", "")
-        target_ext = rule.get("ext", "png").lower()
+    # Start the mirror process
+    is_mirroring = True 
+    try:
+        for rule in rules:
+            if not rule.get("active", True):
+                continue
+                
+            target_dir = rule.get("path", "")
+            target_ext = rule.get("ext", "png").lower()
 
-        if not target_dir or not os.path.isdir(target_dir):
-            continue
+            if not target_dir or not os.path.isdir(target_dir):
+                continue
 
-        try:
-            # Extract original filename without extension
-            base_name = os.path.basename(params.filename)
-            file_no_ext = os.path.splitext(base_name)[0]
+            try:
+                base_name = os.path.basename(params.filename)
+                file_no_ext = os.path.splitext(base_name)[0]
 
-            # Use Forge's internal save_image to ensure metadata is injected
-            images.save_image(
-                params.image, 
-                target_dir, 
-                "", 
-                extension=target_ext, 
-                forced_filename=file_no_ext,
-                info=gen_info  # Now using our safely retrieved gen_info
-            )
-        except Exception as e:
-            print(f"[Mirror Manager] Failed to mirror to {target_dir}: {e}")
+                images.save_image(
+                    params.image, 
+                    target_dir, 
+                    "", 
+                    extension=target_ext, 
+                    forced_filename=file_no_ext,
+                    info=gen_info
+                )
+            except Exception as e:
+                print(f"[Mirror Manager] Error: {e}")
+    finally:
+        # ALWAYS reset the flag, even if an error occurs
+        is_mirroring = False
+
 def on_ui_tabs():
     with gr.Blocks() as mirror_ui:
         gr.Markdown("### 📂 Image Mirror Manager")
