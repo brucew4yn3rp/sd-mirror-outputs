@@ -37,4 +37,4 @@ Modern UI: A dedicated tab with a reactive Gradio interface for adding, removing
 - A "Mirror" file will instantly appear in your specified folders as soon as the generation finishes.
 
 📝 Configuration File
-The settings are stored in scripts/mirror_rules.json. If you ever need to bulk-edit your paths or back up your configuration, you can edit this file directly.
+- The settings are stored in scripts/mirror_rules.json. If you ever need to bulk-edit your paths or back up your configuration, you can edit this file directly.
