@@ -22,6 +22,14 @@ def on_image_saved(params: script_callbacks.ImageSaveParams):
     if not rules:
         return
 
+    # Try to grab the metadata (generation info) safely
+    # params.pnginfo usually contains the metadata dictionary in newer Forge versions
+    gen_info = params.pnginfo.get("parameters", "") if params.pnginfo else ""
+    
+    # Fallback: Check if it's available in the processing object 'p'
+    if not gen_info and hasattr(params, 'p') and params.p:
+        gen_info = getattr(params.p, "info", "")
+
     for rule in rules:
         if not rule.get("active", True):
             continue
@@ -37,19 +45,17 @@ def on_image_saved(params: script_callbacks.ImageSaveParams):
             base_name = os.path.basename(params.filename)
             file_no_ext = os.path.splitext(base_name)[0]
 
-            # Use Forge's internal save_image to ensure metadata (EXIF/PNG chunks) is copied
+            # Use Forge's internal save_image to ensure metadata is injected
             images.save_image(
                 params.image, 
                 target_dir, 
                 "", 
                 extension=target_ext, 
                 forced_filename=file_no_ext,
-                # Pass generation info to ensure metadata follows
-                info=params.p.info if hasattr(params, 'p') else None
+                info=gen_info  # Now using our safely retrieved gen_info
             )
         except Exception as e:
             print(f"[Mirror Manager] Failed to mirror to {target_dir}: {e}")
-
 def on_ui_tabs():
     with gr.Blocks() as mirror_ui:
         gr.Markdown("### 📂 Image Mirror Manager")
