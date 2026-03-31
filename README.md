@@ -13,7 +13,7 @@ Metadata Preservation: Uses Forge's internal saving engine to ensure Prompts, Se
 
 Native Linux Support: Works perfectly with Linux file paths (e.g., /home/user/Downloads).
 
-Persistent Rules: Configuration is saved to a mirror_rules.json file, so your settings persist across restarts.
+Persistent Rules: Configuration is saved to an automatically generated mirror_rules.json file (which is also saved in the Scripts folder), so your settings persist across restarts.
 
 Modern UI: A dedicated tab with a reactive Gradio interface for adding, removing, and toggling rules.
 
