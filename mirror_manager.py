@@ -2,6 +2,7 @@ import os
 import json
 import io
 import subprocess
+import ctypes
 import gradio as gr
 from PIL import Image
 from modules import script_callbacks, shared, images
@@ -22,25 +23,43 @@ def save_rules(rules):
         json.dump(rules, f, indent=4)
 
 def copy_image_to_clipboard(img):
-    """Cross-platform clipboard support for images."""
+    """Robust cross-platform clipboard support for images."""
     try:
-        output = io.BytesIO()
-        img.save(output, format="PNG")
-        data = output.getvalue()
-        output.close()
-
-        if os.name == 'nt':  # Windows
+        if os.name == 'nt':  # Windows Logic
             import win32clipboard
-            win32clipboard.OpenClipboard()
-            win32clipboard.EmptyClipboard()
-            win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data[14:]) # Strip BMP header if needed, but for PNG it's complex
-            # Note: For Windows, standard PIL to clipboard usually requires 'pywin32'
-            win32clipboard.CloseClipboard()
-        else:  # Linux
-            # Try xclip (X11)
-            subprocess.run(['xclip', '-selection', 'clipboard', '-t', 'image/png'], input=data, check=True)
+            from io import BytesIO
+
+            # Convert to RGB (Required for standard clipboard)
+            img_rgb = img.convert("RGB")
+            output = BytesIO()
+            img_rgb.save(output, format="BMP")
+            data = output.getvalue()[14:]  # Strip BMP header
+            output.close()
+
+            # Retry loop to handle cases where another app is locking the clipboard
+            for _ in range(5):
+                try:
+                    win32clipboard.OpenClipboard()
+                    win32clipboard.EmptyClipboard()
+                    # CF_DIB is 8. This handles the memory allocation internally.
+                    win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
+                    win32clipboard.CloseClipboard()
+                    break
+                except Exception as e:
+                    import time
+                    time.sleep(0.1) # Wait 100ms and try again
+            
+        else:  # Linux Logic (X11)
+            output = io.BytesIO()
+            img.save(output, format="PNG")
+            data = output.getvalue()
+            output.close()
+            # Check if xclip is available
+            subprocess.run(['xclip', '-selection', 'clipboard', '-t', 'image/png'], 
+                           input=data, check=True, capture_output=True)
+            
     except Exception as e:
-        print(f"[Mirror Manager] Clipboard copy failed: {e}. (On Linux, ensure 'xclip' or 'wl-copy' is installed)")
+        print(f"[Mirror Manager] Clipboard copy failed: {e}")
 
 def on_image_saved(params: script_callbacks.ImageSaveParams):
     global is_mirroring
